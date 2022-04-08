@@ -1,19 +1,35 @@
+from urllib import response
 import discord
 from discord.ext import commands
 import requests
+import time
 
-class MemeAPI(commands.Cog):
+class JokesAndMeme(commands.Cog):
     def __init__(self, bot):
       self.bot = bot
 
     @commands.command()
     async def meme(self, ctx, *query):
+        """Finds random memes from Reddit subreddits
+
+        Parameters
+        --
+        * `query` - optional. Use to specify the subreddit.
+        """
         if query is not None and len(query) > 1:
             query = ctx.message.content[5:].strip()
             response = requests.get(f"https://meme-api.herokuapp.com/gimme/{query}").json()
         else:
             response = requests.get(f"https://meme-api.herokuapp.com/gimme").json()
         await ctx.send(response["preview"].pop())
+    
+    @commands.command()
+    async def joke(self, ctx):
+        response = requests.get("https://joke.deno.dev").json()
+        await ctx.send(response["setup"])
+        time.sleep(3)
+        await ctx.send(response["punchline"])
+        
 
 class Math(commands.Cog):
     def __init__(self, bot):

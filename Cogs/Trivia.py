@@ -9,6 +9,11 @@ class Trivia(commands.Cog):
         self.participants = participants
     
     def get_trivia_categories(self):
+        """
+        Gets the trivia categories.add()
+        
+        Retruns a dictionary where keys are the names of the categories and values are id.
+        """
         category_response = requests.get("https://opentdb.com/api_category.php").json()
         categories = {}
         # construct a new dict with the structure {"Name of category": id}
@@ -17,7 +22,8 @@ class Trivia(commands.Cog):
         return categories
 
     def set_up_trivia(self, ctx, options):
-        """Sets up the trivia questions.
+        """
+        Sets up the trivia questions.
         
         Parameters
         -
@@ -63,6 +69,7 @@ class Trivia(commands.Cog):
         return question_lst
 
     async def start_trivia(self, ctx, trivia_questions):
+        """Starts the trivia."""
         # Respond only to users who are participating
         if ctx.author in self.participants:
 
@@ -82,13 +89,12 @@ class Trivia(commands.Cog):
                     return ctx.author == msg.author #To make sure it is the only message author is getting
                 
                 given_answer = await self.bot.wait_for("message", check=check)
-                #if given_answer.author in participants:
                 if given_answer.content == correct_answer.lower() or given_answer.content == correct_answer:
                     score[given_answer.author] += 1
-                    
                     await ctx.send(f"`+1 {given_answer.author}`")
             else:
                 pass
+
         # Player scores embed
         score_embed = discord.Embed(title="Scores", colour=discord.Colour.green())
         for player in self.participants:
@@ -116,4 +122,4 @@ class Trivia(commands.Cog):
             except:
                 await ctx.send("Oh no! Something went wrong, use `-trivia info` for a guide on how to play.")
         else:
-            await ctx.send("Use `-trivia info` for a guide on how to play.")
+            await ctx.send("Oh no! Something went wrong, use `-trivia info` for a guide on how to play.")

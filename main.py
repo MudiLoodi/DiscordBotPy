@@ -10,18 +10,10 @@ participants = []
 bot = commands.Bot(command_prefix="-")
 bot.add_cog(Music(bot, song_queue))
 bot.add_cog(Trivia(bot, participants))
-bot.add_cog(MemeAPI(bot))
+bot.add_cog(JokesAndMeme(bot))
 bot.add_cog(Math(bot))
 
-# Give prompt if command is unknown.
-@bot.event
-async def on_message(message):
-    if message.author == bot.user:
-        return
-    if message.content.startswith('-') and message.content.startswith('-') not in bot.all_commands.keys():
-        await message.channel.send(f"Unknown command {message.content}.")
-    bot.process_commands(message)
-
+bot_commands = [i for i in bot.all_commands.keys()]
 
 @bot.event
 async def on_ready():
@@ -29,6 +21,13 @@ async def on_ready():
     for guild in bot.guilds:
         channel = discord.utils.get(guild.text_channels, name="general")
     await channel.send("Bot is online")
+
+# Give prompt if command is unknown.
+@bot.event
+async def on_command_error(ctx, error):
+    if isinstance(error, commands.CommandError):
+        await ctx.send(error)
+    await bot.process_commands(error)
 
 # TODO Removed for now since it is useless, may reintroduce later
 """ @bot.command()
