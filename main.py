@@ -13,6 +13,16 @@ bot.add_cog(Trivia(bot, participants))
 bot.add_cog(MemeAPI(bot))
 bot.add_cog(Math(bot))
 
+# Give prompt if command is unknown.
+@bot.event
+async def on_message(message):
+    if message.author == bot.user:
+        return
+    if message.content.startswith('-') and message.content.startswith('-') not in bot.all_commands.keys():
+        await message.channel.send(f"Unknown command {message.content}.")
+    bot.process_commands(message)
+
+
 @bot.event
 async def on_ready():
     print('We have logged in as {0.user}'.format(bot))
